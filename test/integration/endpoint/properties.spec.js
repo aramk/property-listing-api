@@ -72,5 +72,25 @@ describe('properties endpoint', () => {
       });
   });
 
-});
+  it('can update a property', function() {
+    const newProperty = _.cloneDeep(propertiesFixture[0]);
+    const id = newProperty._id;
+    newProperty.zoopla.listingId = 'bar2';
+    this.sinon.stub(Property, 'findByIdAndUpdate', () => Q.resolve(newProperty));
+    
+    return request(app)
+      .put(`/properties/${id}`)
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json')
+      .send(newProperty)
+      .expect(200)
+      .expect('Content-Type', 'application/json; charset=utf-8')
+      .expect(({body} = response) => {
+        expect(Property.findByIdAndUpdate).to.have.been.calledWith(id, newProperty);
+        expect(body).not.with.property(config.MONGOOSE_VERSION_KEY);
+        expect(body).with.property('_id', id);
+        expect(body).with.deep.property('zoopla.listingId', 'bar2');
+      });
+  });
 
+});

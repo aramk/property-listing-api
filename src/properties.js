@@ -25,4 +25,10 @@ router.post('/', function(req, res, next) {
   }).catch(next);
 });
 
+router.put('/:id', function(req, res, next) {
+  Property.findByIdAndUpdate(req.params.id, req.body).then(property => {
+    res.send(MongooseDocTransformer.removeVersionKey(property));
+  }).catch(next);
+});
+
 module.exports = router;
