@@ -93,4 +93,19 @@ describe('properties endpoint', () => {
       });
   });
 
+  it('can delete a property', function() {
+    this.sinon.stub(Property, 'remove', () => Q.resolve());
+
+    return request(app)
+      .delete('/properties/58bbe11efe5092cb0b206924')
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json')
+      .expect(200)
+      .expect('Content-Type', 'application/json; charset=utf-8')
+      .expect(({body} = response) => {
+        expect(Property.remove).to.have.been.called;
+        expect(body).with.property('success', true);
+      });
+  });
+
 });

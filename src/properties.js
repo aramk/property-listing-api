@@ -31,4 +31,10 @@ router.put('/:id', function(req, res, next) {
   }).catch(next);
 });
 
+router.delete('/:id', function(req, res, next) {
+  Property.remove(req.params.id).then(response => {
+    res.send({success: true});
+  }).catch(next);
+});
+
 module.exports = router;
