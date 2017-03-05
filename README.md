@@ -26,10 +26,10 @@ See the endpoint tests in `test/endpoint` for examples.
 
 ### Properties
 
-	GET /properties
-	GET /properties/:id
-	POST /properties
-	PUT /properties/:id
+	GET    /properties
+	GET    /properties/:id
+	POST   /properties
+	PUT    /properties/:id
 	DELETE /properties/:id
 
 ## Tests
