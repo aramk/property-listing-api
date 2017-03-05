@@ -4,15 +4,15 @@
   "description": "",
   "main": "src/index.js",
   "scripts": {
-    "lint": "eslint.js src/**/*.js test/**/*.js test/integration/**/*.js",
+    "start": "chokidar 'src/**/*' -c 'npm run restart' --initial --silent",
+    "server": "node src/index.js",
+    "stop": "kill -9 $(lsof -t -i:3000 -sTCP:LISTEN) || true",
+    "restart": "npm-run-all stop server",
+    "lint": "eslint src/**/*.js test/**/*.js test/integration/**/*.js",
     "coverage": "istanbul cover _mocha -- -R dot --recursive test/",
-    "start": "node src/index.js",
-    "documentation": "mocha --reporter supersamples './test/docs'",
     "pretest": "npm run lint",
-    "test": "multi='mocha-osx-reporter=- spec=-' mocha './test/**/*.spec.js' --require ./test/helper.js --reporter mocha-multi",
-    "test:watch": "chokidar 'src/**/*' 'test/**/*' -c 'npm test' --initial --silent",
-    "integrationTest": "mocha -t 20000 './test/integration/**/*.spec.js'",
-    "testIntegrationReport": "mocha -t 20000 './test/integration/**/*.spec.js'  --reporter mochawesome"
+    "test": "multi='mocha-osx-reporter=- spec=-' mocha ./test/helper.js ./test/**/*.spec.js --reporter mocha-multi --timeout 5000",
+    "test:watch": "chokidar 'src/**/*' 'test/**/*' -c 'npm test' --initial --silent"
   },
   "author": "Aram Kocharyan <akarmenia@gmail.com>",
   "license": "MIT",
@@ -26,20 +26,21 @@
     "mocha-multi": "^0.10.0",
     "mocha-osx-reporter": "^0.1.2",
     "mochawesome": "1.4.0",
-    "rest": "^2.0.0",
+    "npm-run-all": "^4.0.2",
     "sinon": "^1.17.6",
     "sinon-chai": "^2.8.0",
     "supersamples": "^1.2.0",
     "supertest": "^2.0.0"
   },
   "dependencies": {
-    "@aramk/property-listing-services": "https://github.com/aramk/property-listing-services.git#master",
     "@aramk/property-listing-models": "https://github.com/aramk/property-listing-models.git#master",
-    "axios": "^0.15.3",
+    "@aramk/property-listing-services": "https://github.com/aramk/property-listing-services.git#master",
     "body-parser": "^1.15.2",
-    "cjson": "^0.4.0",
     "cors": "^2.8.1",
+    "envobj": "^1.0.3",
     "express": "^4.15.0",
-    "lodash": "^4.15.0"
+    "lodash": "^4.15.0",
+    "morgan": "^1.8.1",
+    "q": "^1.4.1"
   }
 }

@@ -1,10 +1,6 @@
-const express = require('express');
-const app = express();
+const app = require('./app.js');
+const config = require('./config.js');
 
-const properties = require('./properties');
-
-app.use('/properties', properties);
-
-app.listen(3000, function () {
+app.listen(config.PORT, function () {
   console.log('App started on port 3000');
 });
