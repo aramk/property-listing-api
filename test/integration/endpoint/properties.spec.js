@@ -1,9 +1,9 @@
 'use strict';
 
 const expect = require('chai').expect;
-const sinon = require('sinon');
 const request = require('supertest');
 const Q = require('q');
+const _ = require('lodash');
 
 const Property = require('@aramk/property-listing-models').Property;
 
@@ -12,20 +12,11 @@ const propertiesFixture = require('../../fixtures/properties-get-all.json');
 
 describe('properties endpoint', () => {
 
-  let app;
+  const app = require('../../../src/app.js');
 
-  before(() => {
-    app = require('../../../src/app.js');
-    
-    sinon.stub(Property, 'find', () => Q.resolve(propertiesFixture));
-    sinon.stub(Property, 'findById', () => Q.resolve(propertiesFixture[0]));
-  });
+  it('can get properties', function() {
+    this.sinon.stub(Property, 'find', () => Q.resolve(propertiesFixture));
 
-  after(() => {
-    Property.find.restore();
-  });
-
-  it('should get properties', function() {
     return request(app)
       .get('/properties')
       .set('Accept', 'application/json')
@@ -33,6 +24,7 @@ describe('properties endpoint', () => {
       .expect(200)
       .expect('Content-Type', 'application/json; charset=utf-8')
       .expect(({body} = response) => {
+        expect(Property.find).to.have.been.called;
         expect(body).with.property('properties');
         expect(body).with.property('count', 60);
         const doc = body.properties[0];
@@ -42,7 +34,9 @@ describe('properties endpoint', () => {
       });
   });
 
-  it('should get a single property', function() {
+  it('can get a property', function() {
+    this.sinon.stub(Property, 'findById', () => Q.resolve(propertiesFixture[0]));
+
     return request(app)
       .get('/properties/58bbe11efe5092cb0b206924')
       .set('Accept', 'application/json')
@@ -50,9 +44,31 @@ describe('properties endpoint', () => {
       .expect(200)
       .expect('Content-Type', 'application/json; charset=utf-8')
       .expect(({body} = response) => {
+        expect(Property.findById).to.have.been.called;
         expect(body).not.with.property(config.MONGOOSE_VERSION_KEY);
         expect(body).with.property('_id', '58bbe11efe5092cb0b206924');
         expect(body).with.deep.property('zoopla.listingId', '33119661');
+      });
+  });
+
+  it('can create a property', function() {
+    const newProperty = _.cloneDeep(propertiesFixture[0]);
+    newProperty._id = 'foo';
+    newProperty.zoopla.listingId = 'bar';
+    this.sinon.stub(Property, 'create', () => Q.resolve(newProperty));
+    
+    return request(app)
+      .post('/properties')
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json')
+      .send(newProperty)
+      .expect(200)
+      .expect('Content-Type', 'application/json; charset=utf-8')
+      .expect(({body} = response) => {
+        expect(Property.create).to.have.been.calledWith(newProperty);
+        expect(body).not.with.property(config.MONGOOSE_VERSION_KEY);
+        expect(body).with.property('_id', 'foo');
+        expect(body).with.deep.property('zoopla.listingId', 'bar');
       });
   });
 

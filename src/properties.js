@@ -19,4 +19,10 @@ router.get('/:id', function(req, res, next) {
   }).catch(next);
 });
 
+router.post('/', function(req, res, next) {
+  Property.create(req.body).then(property => {
+    res.send(MongooseDocTransformer.removeVersionKey(property));
+  }).catch(next);
+});
+
 module.exports = router;
