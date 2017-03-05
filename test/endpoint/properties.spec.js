@@ -7,12 +7,11 @@ const _ = require('lodash');
 
 const Property = require('@aramk/property-listing-models').Property;
 
-const config = require('../../../src/config.js');
-const propertiesFixture = require('../../fixtures/properties-get-all.json');
+const app = require('../../src/app.js');
+const config = require('../../src/config.js');
+const propertiesFixture = require('../fixtures/properties-get-all.json');
 
 describe('properties endpoint', () => {
-
-  const app = require('../../../src/app.js');
 
   it('can get properties', function() {
     this.sinon.stub(Property, 'find', () => Q.resolve(propertiesFixture));
