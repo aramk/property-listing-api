@@ -26,7 +26,7 @@ router.post('/', function(req, res, next) {
 });
 
 router.put('/:id', function(req, res, next) {
-  Property.findByIdAndUpdate(req.params.id, req.body).then(property => {
+  Property.findByIdAndUpdate(req.params.id, req.body, {new: true}).then(property => {
     res.send(MongooseDocTransformer.removeVersionKey(property));
   }).catch(next);
 });
